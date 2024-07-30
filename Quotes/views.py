@@ -9,7 +9,7 @@ def home(request):
     return render(request, 'home.html', {'name': request.user})
 
 def friendsPage(request):
-    return render(request, 'friendspage.html')
+    return render(request, 'friendspage.html',  {'name': request.user})
 
 def makeform(request):
     if request.method =='POST':

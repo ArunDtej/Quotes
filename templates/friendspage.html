@@ -1,9 +1,10 @@
 {% extends 'Nav.html' %}
 
 {% block pagecontent %}
-  <div class="item">
-    <div class="d-flex justify-content-between align-items-center">
-      <span class="username">Username</span>
+
+  <div class="item" style="margin: 10px;">
+    <div class="d-flex justify-content-between align-items-center" style="width: 40%; margin: 0 auto; border: 1px solid #ddd; padding: 10px; box-sizing: border-box;">
+      <span class="username" style="white-space: normal;">Username</span>
       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#optionsModal">Options</button>
     </div>
 
@@ -17,8 +18,8 @@
           </div>
           <div class="modal-body">
             <div class="btn-group-vertical" role="group" aria-label="Options">
-              <button type="button" class="btn btn-secondary" onclick="performAction1()">Unfriend</button>
-              <button type="button" class="btn btn-secondary" onclick="performAction2()">Unfollow</button>
+              <button type="button" class="btn btn-secondary" onclick="performAction1()" style="margin-bottom: 10px;">Unfriend</button>
+              <button type="button" class="btn btn-secondary" onclick="performAction2()" style="margin-bottom: 10px;">Unfollow</button>
             </div>
           </div>
           <div class="modal-footer">
@@ -35,10 +36,8 @@
     }
     
     function performAction2() {
-      console.log('Navigating to:', url);
-      window.location.href = url;
+      console.log('Navigating to:', url)
+      window.location.href = url
     }
-    
-    
   </script>
 {% endblock %}
