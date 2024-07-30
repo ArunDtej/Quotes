@@ -2,6 +2,7 @@ from django.shortcuts import render, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from .forms import NameForm
+from .models import FriendsList
 
 @login_required(login_url= '/auth/login/')
 def home(request):
@@ -9,7 +10,8 @@ def home(request):
     return render(request, 'home.html', {'name': request.user})
 
 def friendsPage(request):
-    return render(request, 'friendspage.html',  {'name': request.user})
+    fl = FriendsList.objects.get(user = request.user)
+    return render(request, 'friendspage.html',  {'name': request.user, 'friends': fl.friends.all()})
 
 def Notif(request):
     return render(request, 'notifications.html', {'name': request.user})
