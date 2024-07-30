@@ -1,1 +1,13 @@
 {% extends 'Nav.html' %}
+
+{% block pagecontent%}
+{% if notification%}
+{% for notif in notification%}
+<p>{{notif.Type}} , {{notif.from_user}}</p>
+{% endfor %}
+
+{%else%}
+No Notif
+{%endif%}
+
+{% endblock%}

@@ -10,8 +10,18 @@ class FriendsList(models.Model):
     
     def add_friend(self, friend):
         if friend not in self.friends.all():
-            self.friends.add(friend)
-            self.save()
+
+            notification = Notification(user = friend, Type = 'Request', from_user = self.user)
+            notification.save()
+
+    def accept_request(self,friend: User):
+        self.friends.add(friend)
+        self.save()
+
+        B = FriendsList.objects.get(user = friend)
+        B.friends.add(self.user)
+        B.save()
+
     
     def remove_friend(self, friend):
         if friend in self.friends.all():
@@ -33,17 +43,10 @@ class FriendsList(models.Model):
         return mutual_friends
     
 class Notification(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, )
-    Type = models.CharField(max_length=255, related_name= 'type')
-    _from = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_from')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name= 'notifications')
+    Type = models.CharField(max_length=255)
+    from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_from')
     created_at = models.DateTimeField(auto_now_add=True) 
 
     def __str__(self):
         return self.Type
-    
-class PendingNotif(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='notifications')
-    notifications = models.ManyToManyField(Notification, related_name='pending_notifs', blank=True)
-
-    def __str__(self):
-        return f"{self.user.username}'s pending notifications"

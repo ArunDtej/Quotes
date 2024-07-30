@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
-from Quotes.models import FriendsList, PendingNotif
+from Quotes.models import FriendsList, Notification
 
 def userLogin(request):
     if request.method == "POST":
@@ -19,6 +19,7 @@ def userLogin(request):
                 
                 else:
                     messages.info(request, "Invalid credentials.")
+
             except Exception as e:
                 messages.info(request, "An error occurred: {}".format(e))
 
@@ -46,9 +47,6 @@ def userSignup(request):
                     newUser = User.objects.create_user(email=email, username=email, password=password, first_name= firstName, last_name= lastName,)
                     newUser.save()
                     created_user = FriendsList.objects.create(user = newUser)
-                    created_user.save()
-
-                    created_user = PendingNotif.objects.create(user = newUser)
                     created_user.save()
 
                     login(request, newUser)
