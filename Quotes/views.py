@@ -30,7 +30,7 @@ def makeform(request):
         myform = NameForm(request.POST)
         if myform.is_valid():
             pass
-        return HttpResponse(f'{myform.cleaned_data['address']}, {myform.cleaned_data['your_name']}')
+        return HttpResponse(f"{myform.cleaned_data['address']}, {myform.cleaned_data['your_name']}")
     else:
         myform = NameForm()
     return render(request,'myform.html', {'form': myform})
