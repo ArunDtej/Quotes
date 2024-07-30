@@ -31,4 +31,19 @@ class FriendsList(models.Model):
     def are_friends(self, friends_collection):
         mutual_friends = self.friends.filter(id__in=friends_collection.values_list('id', flat=True))
         return mutual_friends
+    
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, )
+    Type = models.CharField(max_length=255, related_name= 'type')
+    _from = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_from')
+    created_at = models.DateTimeField(auto_now_add=True) 
 
+    def __str__(self):
+        return self.Type
+    
+class PendingNotif(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='notifications')
+    notifications = models.ManyToManyField(Notification, related_name='pending_notifs', blank=True)
+
+    def __str__(self):
+        return f"{self.user.username}'s pending notifications"

@@ -1,8 +1,10 @@
 from django.shortcuts import render, HttpResponse
+from django.http import Http404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from .forms import NameForm
 from .models import FriendsList
+from django.contrib.auth.models import User
 
 @login_required(login_url= '/auth/login/')
 def home(request):
@@ -10,7 +12,11 @@ def home(request):
     return render(request, 'home.html', {'name': request.user})
 
 def friendsPage(request):
-    fl = FriendsList.objects.get(user = request.user)
+    user = User.objects.filter(email = request.user.email).first()
+    print(request.user.email)
+    fl = FriendsList.objects.filter(user = user).first()
+    if not fl:
+        raise Http404("User not found")
     return render(request, 'friendspage.html',  {'name': request.user, 'friends': fl.friends.all()})
 
 def Notif(request):

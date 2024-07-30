@@ -1,3 +1,4 @@
 from django.contrib import admin
+from Quotes.models import FriendsList
 
-# Register your models here.
+admin.site.register(FriendsList)
