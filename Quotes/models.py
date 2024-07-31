@@ -11,7 +11,7 @@ class FriendsList(models.Model):
     def add_friend(self, friend):
         if friend not in self.friends.all():
 
-            notification = Notification(user = friend, Type = 'Request', from_user = self.user)
+            notification = Notification(user = friend, Type = "Request", from_user = self.user)
             notification.save()
 
     def accept_request(self,friend: User):
