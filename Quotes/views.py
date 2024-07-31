@@ -8,11 +8,13 @@ from django.contrib import messages
 
 @login_required(login_url= '/auth/login/')
 def home(request):
+    #home page to display posts from friends with paging
     print('User: {}'.format(request.user))
     return render(request, 'home.html', {'name': request.user})
 
 @login_required(login_url= '/auth/login/')
 def friendsPage(request):
+    #fetch and display friends
     user = User.objects.filter(email = request.user.email).first()
     print(request.user.email)
     fl = FriendsList.objects.filter(user = user).first()
@@ -22,6 +24,7 @@ def friendsPage(request):
 
 @login_required(login_url= '/auth/login/')
 def Notif(request):
+    #fetch and display notifications
     notification = Notification.objects.filter(user= request.user).order_by('-created_at')
     return render(request, 'notifications.html', {'name': request.user, 'notification': notification})
 
@@ -69,14 +72,5 @@ def unFriend(request, user_id):
     return friendsPage(request)
 
 def Profile(request):
+    # display user profile
     return render(request, 'home.html', {'name': request.user})
-
-def makeform(request):
-    if request.method =='POST':
-        myform = NameForm(request.POST)
-        if myform.is_valid():
-            pass
-        return HttpResponse(f"{myform.cleaned_data['address']}, {myform.cleaned_data['your_name']}")
-    else:
-        myform = NameForm()
-    return render(request,'myform.html', {'form': myform})
