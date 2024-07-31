@@ -46,7 +46,9 @@ class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name= 'notifications')
     Type = models.CharField(max_length=255)
     from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_from')
-    created_at = models.DateTimeField(auto_now_add=True) 
+    created_at = models.DateTimeField(auto_now_add=True)
+    post_id = models.IntegerField(blank=True, null=True)
+    is_read = models.BooleanField(default=False)
 
     def __str__(self):
         return self.Type
