@@ -27,6 +27,7 @@ def Notif(request):
 
 @login_required(login_url= '/auth/login/')
 def acceptFriendRequest(request, notif_id):
+    # accepts friend request from notifications
     notification = Notification.objects.get(id = notif_id)
     if not notification:
         raise Http404("Notification not found")
@@ -42,6 +43,7 @@ def acceptFriendRequest(request, notif_id):
 
 @login_required(login_url= '/auth/login/')
 def clearNotifications(request):
+    #clears all notifications
     user = User.objects.filter(email = request.user.email).first()
     fl = FriendsList.objects.filter(user = user).first()
     if not fl:
@@ -49,12 +51,22 @@ def clearNotifications(request):
     Notification.objects.filter(user=request.user).delete()
     return Notif(request)
 
+@login_required(login_url= '/auth/login/')
 def deleteNotification(request, notif_id):
+    #deletes individual notification
     notification = Notification.objects.get(id = notif_id)
     if not notification:
         raise Http404("Notification not found")
     notification.delete()
     return Notif(request)
+
+@login_required(login_url='/auth/login/')
+def unFriend(request, user_id):
+    #removes friend from friends page
+    friend = User.objects.filter(id = user_id).first()
+    user = User.objects.filter(email = request.user.email).first()
+    FriendsList.objects.filter(user = user).first().unfriend(friend)
+    return friendsPage(request)
 
 def Profile(request):
     return render(request, 'home.html', {'name': request.user})
