@@ -21,23 +21,34 @@ def friendsPage(request):
 
 @login_required(login_url= '/auth/login/')
 def Notif(request):
-    notification = Notification.objects.filter(user= request.user)
+    notification = Notification.objects.filter(user= request.user).order_by('-created_at')
     return render(request, 'notifications.html', {'name': request.user, 'notification': notification})
 
 @login_required(login_url= '/auth/login/')
-def acceptFriendRequest(request):
+def acceptFriendRequest(request, notif_id):
+
+    notification = Notification.objects.get(id = notif_id)
+    if not notification:
+        raise Http404("Notification not found")
+    
     user = User.objects.filter(email = request.user.email).first()
     fl = FriendsList.objects.filter(user = user).first()
     if not fl:
         raise Http404("User not found")
-    fl.accept_request(request.POST['friend'])
+    fl.accept_request(User.objects.filter(username=notification.from_user).first())
+    notification.delete()
+    #request accepted notification = request.user.email).first())
     #request accepted notification
-    return render(request,'notifications.html', {'name': request.user, 'notification': notification})
+    return Notif(request)
 
 @login_required(login_url= '/auth/login/')
 def clearNotifications(request):
+    user = User.objects.filter(email = request.user.email).first()
+    fl = FriendsList.objects.filter(user = user).first()
+    if not fl:
+        raise Http404("User not found")
     Notification.objects.filter(user=request.user).delete()
-    return render(request,'notifications.html', {'name': request.user, 'notification': notification})
+    return Notif(request)
 
 def makeform(request):
     if request.method =='POST':

@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from .views import home, makeform, friendsPage, Notif, clearNotifications
+from .views import home, makeform, friendsPage, Notif, clearNotifications, acceptFriendRequest
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('Login.urls')),
@@ -24,5 +24,6 @@ urlpatterns = [
     path('', home, name ='home'),
     path('friends/', friendsPage, name = 'friendsPage'),
     path('notifications/', Notif, name = 'notif'),
-    path('clearNotifications', clearNotifications, name = 'clearnotifications')
+    path('clearNotifications', clearNotifications, name = 'clearnotifications'),
+    path('accept_friend_request/<int:notif_id>/', acceptFriendRequest, name='acceptFriendRequest'),
 ]

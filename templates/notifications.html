@@ -2,26 +2,30 @@
 
 {% block pagecontent%}
 
-{% if notification%}
 
-{% for notif in notification%}
-{% if notif.Type == "Request"%}
+{% if notification%}
 
 <div class="d-flex justify-content-end align-items-center"
     style="width: 40%; margin: 0 auto; border: 1px solid #ddd; padding: 10px; box-sizing: border-box;">
     <a href="{% url 'clearnotifications' %}"> <b>clear</b></a>
 </div>
 
+{% for notif in notification%}
+{% if notif.Type == "Request"%}
 
 <div class="d-flex justify-content-between align-items-center"
     style="width: 40%; margin: 0 auto; border: 1px solid #ddd; padding: 10px; box-sizing: border-box;">
     <span class="username" style="white-space: normal;"><b>{{ notif.from_user }}</b> sent you a friend request</span>
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#FriendRequestModal">Options</button>
+    <p><b>{{ notif.created_at }}</b></p>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#FriendRequestModal"
+        data-notif-id="{{ notif.id }}" >Options</button>
 </div>
+
 {% else%}
 <div class="d-flex justify-content-between align-items-center"
     style="width: 40%; margin: 0 auto; border: 1px solid #ddd; padding: 10px; box-sizing: border-box;">
     <span class="username" style="white-space: normal;">{{ notif.from_user }} Unknown notification</span>
+    <p><b>{{ notif.created_at }}</b></p>
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#FriendRequestModal">Options</button>
 </div>
 {% endif %}
@@ -29,8 +33,16 @@
 {% endfor %}
 
 {%else%}
-No Notif
+<center>
+    No Notif
+</center>
+
 {%endif%}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 
 <!-- Friends Modal -->
 <div class="modal fade" id="FriendRequestModal" tabindex="-1" role="dialog" aria-labelledby="optionsModalLabel"
@@ -44,10 +56,10 @@ No Notif
             </div>
             <div class="modal-body">
                 <div class="btn-group-vertical" role="group" aria-label="Options">
-                    <button type="button" class="btn btn-success" onclick="performAction1()"
-                        style="margin-bottom: 10px;">Accept</button>
-                    <button type="button" class="btn btn-danger" onclick="performAction2()"
-                        style="margin-bottom: 10px;">ignore</button>
+                    <a type="button" class="btn btn-success" id="Accept" href=""
+                        style="margin-bottom: 10px;">Accept</a>
+                    <a type="button" class="btn btn-danger" id="ignore" href=""
+                        style="margin-bottom: 10px;">ignore</a>
                 </div>
             </div>
             <div class="modal-footer">
@@ -56,5 +68,32 @@ No Notif
         </div>
     </div>
 </div>
+
+<script>
+    $('#FriendRequestModal').on('show.bs.modal', function (event) {
+        console.log('Modal is about to be shown.');
+
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        
+        // Debugging: Check the button and its data attribute
+        console.log('Button that triggered the modal:', button);
+        var notifId = button.data('notif-id');
+        console.log('Notification ID:', notifId);
+
+        var acceptUrlTemplate = '{% url "acceptFriendRequest" 0 %}';
+        var ignoreUrlTemplate = '{% url "acceptFriendRequest" 0 %}';
+        
+        var acceptUrl = acceptUrlTemplate.replace(/0/, notifId);
+        var ignoreUrl = ignoreUrlTemplate.replace(/0/, notifId);
+        
+        var modal = $(this);
+        modal.find('#Accept').attr('href', acceptUrl);
+        modal.find('#ignore').attr('href', ignoreUrl);
+        
+        console.log('Updated Accept button href:', modal.find('#Accept').attr('href'));
+        console.log('Updated Ignore button href:', modal.find('#ignore').attr('href'));
+    });
+</script>
+
 
 {% endblock%}
