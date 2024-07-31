@@ -50,6 +50,13 @@ def clearNotifications(request):
     Notification.objects.filter(user=request.user).delete()
     return Notif(request)
 
+def deleteNotification(request, notif_id):
+    notification = Notification.objects.get(id = notif_id)
+    if not notification:
+        raise Http404("Notification not found")
+    notification.delete()
+    return Notif(request)
+
 def makeform(request):
     if request.method =='POST':
         myform = NameForm(request.POST)

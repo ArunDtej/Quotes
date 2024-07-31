@@ -81,7 +81,7 @@
         console.log('Notification ID:', notifId);
 
         var acceptUrlTemplate = '{% url "acceptFriendRequest" 0 %}';
-        var ignoreUrlTemplate = '{% url "acceptFriendRequest" 0 %}';
+        var ignoreUrlTemplate = '{% url "deleteNotification" 0 %}';
         
         var acceptUrl = acceptUrlTemplate.replace(/0/, notifId);
         var ignoreUrl = ignoreUrlTemplate.replace(/0/, notifId);
