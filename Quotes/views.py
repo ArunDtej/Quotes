@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import NameForm
 from .models import FriendsList, Notification
 from django.contrib.auth.models import User
+from django.contrib import messages
 
 @login_required(login_url= '/auth/login/')
 def home(request):
@@ -26,7 +27,6 @@ def Notif(request):
 
 @login_required(login_url= '/auth/login/')
 def acceptFriendRequest(request, notif_id):
-
     notification = Notification.objects.get(id = notif_id)
     if not notification:
         raise Http404("Notification not found")
@@ -37,8 +37,7 @@ def acceptFriendRequest(request, notif_id):
         raise Http404("User not found")
     fl.accept_request(User.objects.filter(username=notification.from_user).first())
     notification.delete()
-    #request accepted notification = request.user.email).first())
-    #request accepted notification
+    messages.success(request, "Login Successful")
     return Notif(request)
 
 @login_required(login_url= '/auth/login/')
@@ -56,6 +55,9 @@ def deleteNotification(request, notif_id):
         raise Http404("Notification not found")
     notification.delete()
     return Notif(request)
+
+def Profile(request):
+    return render(request, 'home.html', {'name': request.user})
 
 def makeform(request):
     if request.method =='POST':
