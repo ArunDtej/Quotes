@@ -71,24 +71,6 @@ def unFriend(request, user_id):
     FriendsList.objects.filter(user = user).first().unfriend(friend)
     return friendsPage(request)
 
-
-@login_required(login_url= '/auth/login/')
-def unfollow_from_friends(request, user_id):
-    #removes user from following list
-    friend = User.objects.filter(id = user_id).first()
-    user = User.objects.filter(email = request.user.email).first()
-    Following.objects.filter(user = user).first().remove_following(friend)
-    messages.success(request, "unfollowed Successful")
-    return friendsPage(request)
-
-@login_required(login_url= '/auth/login/')
-def follow_from_friends(request, user_id):
-    #adds user to following list
-    friend = User.objects.filter(id = user_id).first()
-    user = User.objects.filter(email = request.user.email).first()
-    Following.objects.filter(user = user).first().add_following(friend)
-    messages.success(request, "followed Successful")
-    return friendsPage(request)
    
 
 @login_required(login_url= '/auth/login/')

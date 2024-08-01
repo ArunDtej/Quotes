@@ -1,22 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-class Following(models.Model):
-    user = models.OneToOneField(User, on_delete = models.CASCADE, related_name='following_list')
-    following = models.ManyToManyField(User, related_name='following', blank=True)
-
-    def __str__(self):
-        return f"{self.user.username}'s following"
-    
-    def add_following(self, friend):
-        if friend not in self.following.all():
-            self.following.add(friend)
-            self.save()
-    
-    def remove_following(self, friend):
-        if friend in self.following.all():
-            self.following.remove(friend)
-            self.save()
 
 class FriendsList(models.Model):
     user = models.OneToOneField(User, on_delete = models.CASCADE, related_name='friends_list')
@@ -33,19 +17,16 @@ class FriendsList(models.Model):
     def accept_request(self,friend: User):
         if friend not in self.friends.all():
             self.friends.add(friend)
-            self.user.following_list.following.add_following(friend)
             self.save()
 
             B = FriendsList.objects.get(user = friend)
             B.friends.add(self.user)
-            B.user.following_list.following.add_following(self.user)
             B.save()
 
     
     def remove_friend(self, friend):
         if friend in self.friends.all():
             self.friends.remove(friend)
-            self.user.following_list.following.remove_following(friend)
             self.save()
     
     def unfriend(self, friend):
