@@ -120,7 +120,9 @@ USE_TZ = True
 CSRF_TRUSTED_ORIGINS = [
     'https://8000-idx-quotes-1722362847914.cluster-a3grjzek65cxex762e4mwrzl46.cloudworkstations.dev',
 
-    'https://8000-idx-quotes-1722407611116.cluster-nx3nmmkbnfe54q3dd4pfbgilpc.cloudworkstations.dev'
+    'https://8000-idx-quotes-1722407611116.cluster-nx3nmmkbnfe54q3dd4pfbgilpc.cloudworkstations.dev',
+
+    'https://8000-idx-quotes-1722526478717.cluster-7ubberrabzh4qqy2g4z7wgxuw2.cloudworkstations.dev'
     
 ]
 

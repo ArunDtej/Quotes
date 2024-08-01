@@ -92,8 +92,12 @@ def Profile(request, user_id = None):
 
 @login_required(login_url= '/auth/login/')  
 def uploadPost(request):
-    content = request.POST.get('postContent', '')
-    print(content)
-    post = Posts.objects.create(user=request.user, content=content)
-    post.save()
+    if request.method == 'POST':
+        print("in the function")
+        content = request.POST.get('postContent')
+        post = Posts.objects.create(user=request.user, content=content)
+        post.save()
+        
     return Profile(request, request.user.id)
+
+
