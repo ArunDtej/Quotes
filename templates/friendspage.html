@@ -7,7 +7,7 @@
   {% for friend in friends %}
   <div class="d-flex justify-content-between align-items-center"
     style="width: 40%; margin: 0 auto; border: 1px solid #ddd; padding: 10px; box-sizing: border-box;">
-    <span class="username" style="white-space: normal;">{{ friend.email }}</span>
+    <span class="username" style="white-space: normal;">{{ friend.get_full_name }}</span>
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#optionsModal" data-friend-id="{{ friend.id }}>Options</button>
         </div>
       {% endfor %}
@@ -18,7 +18,7 @@
       </center>
     {% endif %}
 
-    <!-- Modal -->
+    <!-- MODAL --!>
     <div class=" modal fade" id="optionsModal" tabindex="-1" role="dialog" aria-labelledby="optionsModalLabel"
       aria-hidden="true">
       <div class="modal-dialog" role="document">
@@ -49,21 +49,21 @@
 <script>
   $('#optionsModal').on('show.bs.modal', function (event) {
 
-      var button = $(event.relatedTarget);
-      
-      var friendId = button.data('friend-id');
+    var button = $(event.relatedTarget);
 
-      var unfriendUrlTemplate = '{% url "unfriend" 0 %}';
-      var profileUrlTemplate = '{% url "deleteNotification" 0 %}';
-      
-      var unfriendUrl= unfriendUrlTemplate.replace(/0/, friendId);
-      var profileUrl = profileUrlTemplate.replace(/0/, friendId);
-      
-      var modal = $(this);
-      modal.find('#unfriend').attr('href', unfriendUrl);
-      modal.find('#profile').attr('href', profileUrl);
-      
-      
+    var friendId = button.data('friend-id');
+
+    var unfriendUrlTemplate = '{% url "unfriend" 0 %}';
+    var profileUrlTemplate = '{% url "profile_with_id" 0 %}';
+
+    var unfriendUrl = unfriendUrlTemplate.replace(/0/, friendId);
+    var profileUrl = profileUrlTemplate.replace(/0/, friendId);
+
+    var modal = $(this);
+    modal.find('#unfriend').attr('href', unfriendUrl);
+    modal.find('#profile').attr('href', profileUrl);
+
+
   });
 </script>
 

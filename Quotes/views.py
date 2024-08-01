@@ -74,6 +74,9 @@ def unFriend(request, user_id):
    
 
 @login_required(login_url= '/auth/login/')
-def Profile(request):
-    # display user profile
-    return render(request, 'home.html', {'name': request.user})
+def Profile(request, user_id = None):
+    if user_id == None:
+        return render(request, 'profile.html', {'name': request.user})
+    else:
+        user = User.objects.filter(id = user_id).first()
+        return render(request, 'profile_template.html', {'name': user.get_full_name(), 'user': user})

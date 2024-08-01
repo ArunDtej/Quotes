@@ -13,7 +13,8 @@ urlpatterns = [
     path('clearNotifications', clearNotifications, name = 'clearnotifications'),
     path('accept_friend_request/<int:notif_id>/', acceptFriendRequest, name='acceptFriendRequest'),
     path('delete_notification/<int:notif_id>/', deleteNotification, name='deleteNotification'),
-    path('profile/', Profile, name = 'profile'),
+    path('profile/<int:user_id>/', Profile, name = 'profile_with_id'),
+    path('profile/', Profile, name='profile'),
     path('unfriend/<int:user_id>/', unFriend, name = 'unfriend')
 
 ]
