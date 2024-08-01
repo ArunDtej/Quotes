@@ -1,6 +1,23 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class Following(models.Model):
+    user = models.OneToOneField(User, on_delete = models.CASCADE, related_name='following_list')
+    following = models.ManyToManyField(User, related_name='following', blank=True)
+
+    def __str__(self):
+        return f"{self.user.username}'s following"
+    
+    def add_following(self, friend):
+        if friend not in self.following.all():
+            self.following.add(friend)
+            self.save()
+    
+    def remove_following(self, friend):
+        if friend in self.following.all():
+            self.following.remove(friend)
+            self.save()
+
 class FriendsList(models.Model):
     user = models.OneToOneField(User, on_delete = models.CASCADE, related_name='friends_list')
     friends = models.ManyToManyField(User, related_name='friends', blank=True)
@@ -47,9 +64,15 @@ class Notification(models.Model):
     Type = models.CharField(max_length=255)
     from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_from')
     created_at = models.DateTimeField(auto_now_add=True)
-    # post_id = models.IntegerField(blank=True, null=True)
-    # is_read = models.BooleanField(default=False)
+    post_id = models.IntegerField(blank=True, null=True)
+    is_read = models.BooleanField(default=False)
 
     def __str__(self):
+        if self.Type == "Request":
+            return f"{self.from_user} sent you a friend request at {self.created_at}"
+        elif self.Type == "React":
+            return f"{self.from_user} reacted to you a post"
+        elif self.Type == "Comment":
+            return f"{self.from_user} commented on your post"
         return self.Type
     
