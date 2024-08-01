@@ -1,11 +1,24 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class Comments(models.Model):
+    #commented by 
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comment_list')
+    #comment
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} commented on {self.post.id} at {self.created_at}"
+
+
+
 class Posts(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    reactors = models.ManyToManyField(User, related_name='reacted_posts', blank=True)
+    reactors = models.ManyToManyField(User, related_name='reacted_users', blank=True)
+    comments = models.ManyToManyField(Comments, related_name='reacted_users', blank=True)
 
     def add_reactor(self, reactor):
         if reactor not in self.reactors.all():
@@ -37,18 +50,12 @@ class Posts(models.Model):
     def get_reacts(self):
         return self.reactors.all()
 
-class Comments(models.Model):
-    #commented by 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comment_list')
-    #commented on
-    post = models.ForeignKey(Posts, on_delete=models.CASCADE, related_name='commented_on_posts')
-    #comment
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.user.username} commented on {self.post.id} at {self.created_at}"
-
+    def get_reacts_count(self):
+        return len(self.reactors.all())
+    
+    def get_comments_count(self):
+        return len(self.comments.all())
+    
 class FriendsList(models.Model):
     user = models.OneToOneField(User, on_delete = models.CASCADE, related_name='friends_list')
     friends = models.ManyToManyField(User, related_name='friends', blank=True)

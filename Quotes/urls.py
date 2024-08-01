@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from .views import home, friendsPage, Notif, clearNotifications, acceptFriendRequest, deleteNotification, Profile
-from .views import unFriend
+from .views import unFriend, uploadPost
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -15,6 +15,7 @@ urlpatterns = [
     path('delete_notification/<int:notif_id>/', deleteNotification, name='deleteNotification'),
     path('profile/<int:user_id>/', Profile, name = 'profile_with_id'),
     path('profile/', Profile, name='profile'),
-    path('unfriend/<int:user_id>/', unFriend, name = 'unfriend')
+    path('unfriend/<int:user_id>/', unFriend, name = 'unfriend'),
+    path("upload_post/", uploadPost, name = "uploadPost"),
 
 ]

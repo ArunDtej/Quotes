@@ -1,64 +1,89 @@
 {% extends 'Nav.html' %}
-{% block pagecontent%}
-
-
-<section class="w-100 px-4 py-5" style="background-color: #9de2ff; border-radius: .5rem .5rem 0 0;">
+{% block pagecontent %}
+  <section class="w-100 px-4 py-5" style="background-color: #9de2ff; border-radius: .5rem .5rem 0 0;">
     <div class="row d-flex justify-content-center">
-        <div class="col col-md-9 col-lg-7 col-xl-6">
-            <div class="card" style="border-radius: 15px;">
-                <div class="card-body p-4">
-                    <div class="d-flex">
+      <div class="col col-md-9 col-lg-7 col-xl-6">
+        <div class="card" style="border-radius: 15px;">
+          <div class="card-body p-4">
+            <div class="d-flex">
+              <div class="flex-grow-1 ms-3">
+                <h5 class="mb-1">{{ name }}</h5>
+                <p class="mb-0">{{ username }}</p>
+                <!-- <p class="mb-2 ">{{email}}</p> -->
 
-                        <div class="flex-grow-1 ms-3">
+                <div class="d-flex justify-content-start rounded-3 p-2 mb-2 bg-body-tertiary">
+                  <div>
+                    <p class="small mb-1">
+                      <b>Friends</b>
+                    </p>
+                    <a href="#"><p class="mb-0">41</p></a>
+                  </div>
 
+                  <div class="px-3">
+                    <p class="small mb-1">
+                      <b>Posts</b>
+                    </p>
+                    <a href="#"><p class="mb-0">976</p></a>
+                  </div>
+                </div>
 
-                            <h5 class="mb-1">{{name}}</h5>
-                            <p class="mb-0">{{username}}</p>
-                            <!-- <p class="mb-2 ">{{email}}</p> -->
-
-
-                            <div class="d-flex justify-content-start rounded-3 p-2 mb-2 bg-body-tertiary">
-
-                                <div>
-                                    <p class="small mb-1"><b>Friends</b></p>
-                                    <a href="#">
-                                        <p class="mb-0">41</p>
-                                    </a>
-                                </div>
-
-
-                                <div class="px-3">
-                                    <p class="small mb-1"><b>Posts</b></p>
-                                    <a href="#">
-                                        <p class="mb-0">976</p>
-                                    </a>
-                                </div>
-
-                            </div>
-
-                            <!-- <div class="d-flex pt-1">
+                <!--      <div class="d-flex pt-1">
                                 <button type="button" data-mdb-button-init data-mdb-ripple-init
                                     class="btn btn-outline-primary me-1 flex-grow-1">Chat</button>
                                 <button type="button" data-mdb-button-init data-mdb-ripple-init
                                     class="btn btn-primary flex-grow-1">Follow</button>
-                            </div> -->
-
-                        </div>
-                    </div>
-                </div>
+                            </div>      -->
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-</section>
+  </section>
 
-{%if posts%}
+  <Center>
+    <button type="button" class="btn btn-primary mt-2 p-2" data-toggle="modal" data-target="#createPostModal">Create Post</button>
+  </Center>
 
-{%for post in posts%}
-<div>{{post}}</div>
-{%endfor%}
-{%else%}
-<Center>No posts</Center>
-{%endif%}
+  <!-- Create Post Modal -->
+  <div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createPostModalLabel">Create New Post</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <form id="createPostForm" action= "{% url 'uploadPost'%}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="postContent">Content</label>
+              <textarea class="form-control" id="postContent" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
-
+  {% if posts %}
+    {% for post in posts %}
+      <div class="container mt-5">
+        <div class="card">
+          <h5 class="card-header">{{ post.user.get_full_name }}</h5>
+          <div class="card-body">
+            <h6 class="card-title">{{ post.content }}</h6>
+            <p class="card-text text-muted small">{{ post.created_at }}</p>
+            <section class="button-section d-flex justify-content-start">
+              <a class="card-body m-0 p-0" href="#">Reacts: {{ post.get_reacts_count }}</a>
+              <a class="card-body m-0 p-0" href="#">Comments: {{ post.get_comments_count }}</a>
+            </section>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <Center>No posts</Center>
+  {% endif %}
 {% endblock %}

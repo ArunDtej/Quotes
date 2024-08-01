@@ -10,7 +10,7 @@ from django.contrib import messages
 def home(request):
     #home page to display posts from friends with paging
     print('User: {}'.format(request.user))
-    return render(request, 'home.html', {'name': request.user})
+    return render(request, 'home.html', {'name': request.user.get_full_name()})
 
 @login_required(login_url= '/auth/login/')
 def friendsPage(request):
@@ -20,13 +20,13 @@ def friendsPage(request):
     fl = FriendsList.objects.filter(user = user).first()
     if not fl:
         raise Http404("User not found")
-    return render(request, 'friendspage.html',  {'name': request.user, 'friends': fl.friends.all()})
+    return render(request, 'friendspage.html',  {'name': request.user.get_full_name(), 'friends': fl.friends.all()})
 
 @login_required(login_url= '/auth/login/')
 def Notif(request):
     #fetch and display notifications
     notification = Notification.objects.filter(user= request.user).order_by('-created_at')
-    return render(request, 'notifications.html', {'name': request.user, 'notification': notification})
+    return render(request, 'notifications.html', {'name': request.user.get_full_name(), 'notification': notification})
 
 @login_required(login_url= '/auth/login/')
 def acceptFriendRequest(request, notif_id):
@@ -77,7 +77,7 @@ def unFriend(request, user_id):
 def Profile(request, user_id = None):
     if user_id == None or user_id == request.user.id:
         user = User.objects.filter(email = request.user.email).first()
-        posts = Posts.objects.filter(user = user).all()
+        posts = Posts.objects.filter(user = user).all().order_by('-created_at')
 
         context = {"name": request.user.get_full_name(), 
         "username": request.user.username, 
@@ -89,3 +89,11 @@ def Profile(request, user_id = None):
     else:
         user = User.objects.filter(id = user_id).first()
         return render(request, 'profile_template.html', {'name': request.user, "friend" : user.get_full_name()})
+
+@login_required(login_url= '/auth/login/')  
+def uploadPost(request):
+    content = request.POST.get('postContent', '')
+    print(content)
+    post = Posts.objects.create(user=request.user, content=content)
+    post.save()
+    return Profile(request, request.user.id)
