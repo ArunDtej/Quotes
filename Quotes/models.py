@@ -33,16 +33,19 @@ class FriendsList(models.Model):
     def accept_request(self,friend: User):
         if friend not in self.friends.all():
             self.friends.add(friend)
+            self.user.following_list.following.add_following(friend)
             self.save()
 
             B = FriendsList.objects.get(user = friend)
             B.friends.add(self.user)
+            B.user.following_list.following.add_following(self.user)
             B.save()
 
     
     def remove_friend(self, friend):
         if friend in self.friends.all():
             self.friends.remove(friend)
+            self.user.following_list.following.remove_following(friend)
             self.save()
     
     def unfriend(self, friend):

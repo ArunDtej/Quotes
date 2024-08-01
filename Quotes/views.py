@@ -2,7 +2,7 @@ from django.shortcuts import render, HttpResponse
 from django.http import Http404
 from django.contrib.auth.decorators import login_required
 from .forms import NameForm
-from .models import FriendsList, Notification
+from .models import FriendsList, Notification, Following
 from django.contrib.auth.models import User
 from django.contrib import messages
 
@@ -71,6 +71,27 @@ def unFriend(request, user_id):
     FriendsList.objects.filter(user = user).first().unfriend(friend)
     return friendsPage(request)
 
+
+@login_required(login_url= '/auth/login/')
+def unfollow_from_friends(request, user_id):
+    #removes user from following list
+    friend = User.objects.filter(id = user_id).first()
+    user = User.objects.filter(email = request.user.email).first()
+    Following.objects.filter(user = user).first().remove_following(friend)
+    messages.success(request, "unfollowed Successful")
+    return friendsPage(request)
+
+@login_required(login_url= '/auth/login/')
+def follow_from_friends(request, user_id):
+    #adds user to following list
+    friend = User.objects.filter(id = user_id).first()
+    user = User.objects.filter(email = request.user.email).first()
+    Following.objects.filter(user = user).first().add_following(friend)
+    messages.success(request, "followed Successful")
+    return friendsPage(request)
+   
+
+@login_required(login_url= '/auth/login/')
 def Profile(request):
     # display user profile
     return render(request, 'home.html', {'name': request.user})
