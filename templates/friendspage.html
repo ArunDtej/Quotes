@@ -1,13 +1,14 @@
 {% extends 'Nav.html' %}
 
 {% block pagecontent %}
-  <div class="item" style="margin: 10px;">
-    {% if friends %}
+<div class="item" style="margin: 10px;">
+  {% if friends %}
 
-      {% for friend in friends %}
-        <div class="d-flex justify-content-between align-items-center" style="width: 40%; margin: 0 auto; border: 1px solid #ddd; padding: 10px; box-sizing: border-box;">
-          <span class="username" style="white-space: normal;">{{ friend.email }}</span>
-          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#optionsModal">Options</button>
+  {% for friend in friends %}
+  <div class="d-flex justify-content-between align-items-center"
+    style="width: 40%; margin: 0 auto; border: 1px solid #ddd; padding: 10px; box-sizing: border-box;">
+    <span class="username" style="white-space: normal;">{{ friend.email }}</span>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#optionsModal" data-friend-id="{{ friend.id }}>Options</button>
         </div>
       {% endfor %}
       
@@ -18,17 +19,21 @@
     {% endif %}
 
     <!-- Modal -->
-    <div class="modal fade" id="optionsModal" tabindex="-1" role="dialog" aria-labelledby="optionsModalLabel" aria-hidden="true">
+    <div class=" modal fade" id="optionsModal" tabindex="-1" role="dialog" aria-labelledby="optionsModalLabel"
+      aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="optionsModalLabel">Options</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
           </div>
           <div class="modal-body">
             <div class="btn-group-vertical" role="group" aria-label="Options">
-              <button type="button" class="btn btn-danger" onclick="performAction1()" style="margin-bottom: 10px;">Unfriend</button>
-              <button type="button" class="btn btn-danger" onclick="performAction2()" style="margin-bottom: 10px;">Unfollow</button>
+
+              <a type="button" class="btn btn-success" id="unfriend" href="" style="margin-bottom: 10px;">unfriend</a>
+              <a type="button" class="btn btn-danger" id="profile" href="" style="margin-bottom: 10px;">profile</a>
+
             </div>
           </div>
           <div class="modal-footer">
@@ -36,19 +41,30 @@
           </div>
         </div>
       </div>
-    </div>
-
-
   </div>
 
-  <script>
-    function performAction1() {
-      alert('Option 1 selected')
-    }
-    
-    function performAction2() {
-      console.log('Navigating to:', url)
-      window.location.href = url
-    }
-  </script>
+
+</div>
+
+<script>
+  $('#optionsModal').on('show.bs.modal', function (event) {
+
+      var button = $(event.relatedTarget);
+      
+      var friendId = button.data('friend-id');
+
+      var unfriendUrlTemplate = '{% url "unfriend" 0 %}';
+      var profileUrlTemplate = '{% url "deleteNotification" 0 %}';
+      
+      var unfriendUrl= unfriendUrlTemplate.replace(/0/, friendId);
+      var profileUrl = profileUrlTemplate.replace(/0/, friendId);
+      
+      var modal = $(this);
+      modal.find('#unfriend').attr('href', unfriendUrl);
+      modal.find('#profile').attr('href', profileUrl);
+      
+      
+  });
+</script>
+
 {% endblock %}
