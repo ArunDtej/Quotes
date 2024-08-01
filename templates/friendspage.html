@@ -8,7 +8,7 @@
   <div class="d-flex justify-content-between align-items-center"
     style="width: 40%; margin: 0 auto; border: 1px solid #ddd; padding: 10px; box-sizing: border-box;">
     <span class="username" style="white-space: normal;">{{ friend.get_full_name }}</span>
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#optionsModal" data-friend-id="{{ friend.id }}>Options</button>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#optionsModal" data-friend-id="{{ friend.id }}">Options</button>
         </div>
       {% endfor %}
       
@@ -18,7 +18,7 @@
       </center>
     {% endif %}
 
-    <!-- MODAL --!>
+    <!-- MODAL -->
     <div class=" modal fade" id="optionsModal" tabindex="-1" role="dialog" aria-labelledby="optionsModalLabel"
       aria-hidden="true">
       <div class="modal-dialog" role="document">
@@ -43,8 +43,13 @@
       </div>
   </div>
 
-
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
 
 <script>
   $('#optionsModal').on('show.bs.modal', function (event) {
