@@ -2,7 +2,7 @@ from django.shortcuts import render, HttpResponse
 from django.http import Http404
 from django.contrib.auth.decorators import login_required
 from .forms import NameForm
-from .models import FriendsList, Notification
+from .models import FriendsList, Notification, Posts, Comments
 from django.contrib.auth.models import User
 from django.contrib import messages
 
@@ -76,7 +76,16 @@ def unFriend(request, user_id):
 @login_required(login_url= '/auth/login/')
 def Profile(request, user_id = None):
     if user_id == None or user_id == request.user.id:
-        return render(request, 'my_profile.html', {"name": request.user.get_full_name(), "username": request.user.username, "email": request.user.email})
+        user = User.objects.filter(email = request.user.email).first()
+        posts = Posts.objects.filter(user = user).all()
+
+        context = {"name": request.user.get_full_name(), 
+        "username": request.user.username, 
+        "email": request.user.email,
+        "posts": posts,
+        "friends": FriendsList.objects.filter(user = user).first().friends.all()
+        }
+        return render(request, 'my_profile.html', context)
     else:
         user = User.objects.filter(id = user_id).first()
         return render(request, 'profile_template.html', {'name': request.user, "friend" : user.get_full_name()})

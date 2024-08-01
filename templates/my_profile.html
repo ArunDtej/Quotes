@@ -51,4 +51,14 @@
     </div>
 </section>
 
+{%if posts%}
+
+{%for post in posts%}
+<div>{{post}}</div>
+{%endfor%}
+{%else%}
+<Center>No posts</Center>
+{%endif%}
+
+
 {% endblock %}
