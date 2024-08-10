@@ -5,9 +5,10 @@ from .forms import NameForm
 from .models import FriendsList, Notification, Posts, Comments
 from django.contrib.auth.models import User
 from django.contrib import messages
-
+from django.shortcuts import redirect
 from django.utils import timezone
 from datetime import timedelta
+from django.urls import reverse
 
 def home(request):
     user = request.user
@@ -18,7 +19,8 @@ def home(request):
     friends_list = FriendsList.objects.get(user=user)
     friends = friends_list.friends.all()
 
-    posts = Posts.objects.filter(user__in=friends, created_at__gte=two_days_ago)
+    posts = Posts.objects.filter(user__in=friends, created_at__gte=two_days_ago).order_by('-created_at')
+
 
     return render(request, 'home.html', {'posts': posts, 'name': request.user.get_full_name()})
 
@@ -82,28 +84,40 @@ def unFriend(request, user_id):
     FriendsList.objects.filter(user = user).first().unfriend(friend)
     return friendsPage(request)
 
+@login_required(login_url= '/auth/login/')
+def search_user(request):
+    email = request.GET.get('email', '').strip()
+    print(email)
+    if email:
+        user = User.objects.filter(email=email).first()
+        if user:
+            profile_url = reverse('profile_with_id', kwargs={'user_id': user.id})
+            return redirect(profile_url)
+    return HttpResponse('User not found', status=404)
    
 
 @login_required(login_url= '/auth/login/')
 def Profile(request, user_id = None):
-    if user_id == None or user_id == request.user.id:
-        user = User.objects.filter(email = request.user.email).first()
-        posts = Posts.objects.filter(user = user).all().order_by('-created_at')
+    try:
+        if user_id == None or user_id == request.user.id:
+            user = User.objects.filter(email = request.user.email).first()
+            posts = Posts.objects.filter(user = user).all().order_by('-created_at')
 
-        context = {"name": request.user.get_full_name(), 
-        "username": request.user.username, 
-        "email": request.user.email,
-        "posts": posts,
-        "friends": FriendsList.objects.filter(user = user).first().friends.all()
-        }
-        return render(request, 'my_profile.html', context)
-    else:
-        user = User.objects.filter(id = user_id).first()
-        are_friends =  FriendsList.objects.filter(user = request.user).first().are_friends(user)
-        
-        
-
-        return render(request, 'profile_template.html', {'name': user.get_full_name(), "username": user.username, "email": user.email, "posts": Posts.objects.filter(user = user).all().order_by('-created_at'), "are_friends": are_friends, "friend_id": user_id})
+            context = {"name": request.user.get_full_name(), 
+            "username": request.user.username, 
+            "email": request.user.email,
+            "posts": posts,
+            "friends": FriendsList.objects.filter(user = user).first().friends.all()
+            }
+            return render(request, 'my_profile.html', context)
+        else:
+            user = User.objects.filter(id = user_id).first()
+            are_friends =  FriendsList.objects.filter(user = request.user).first().are_friends(user)
+            
+            return render(request, 'profile_template.html', { "friends": FriendsList.objects.filter(user = user).first().friends.all(),
+                'name': user.get_full_name(), "username": user.username, "email": user.email, "posts": Posts.objects.filter(user = user).all().order_by('-created_at'), "are_friends": are_friends, "friend_id": user_id})
+    except Exception as e:
+        return HttpResponse("User not found")
 
 @login_required(login_url= '/auth/login/')  
 def uploadPost(request):
