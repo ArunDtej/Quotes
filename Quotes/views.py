@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponse
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.contrib.auth.decorators import login_required
 from .forms import NameForm
 from .models import FriendsList, Notification, Posts, Comments
@@ -99,5 +99,18 @@ def uploadPost(request):
         post.save()
         
     return Profile(request, request.user.id)
+
+@login_required(login_url= '/auth/login/')
+def deletePost(request, post_id):
+    try:
+        post = Posts.objects.filter(id = post_id)[0]
+        if post.user != request.user:
+            return HttpResponse("You are not authorized to delete this post")
+    
+        post.delete()
+    except Exception as e:
+        return HttpResponse("Failed to delete post")
+
+    return HttpResponse("Successfully deleted post")
 
 

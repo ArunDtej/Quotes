@@ -1,4 +1,72 @@
 {% extends 'Nav.html' %}
-{% block pagecontent%}
-{{friend}}
+{% block pagecontent %}
+<section class="w-100 px-4 py-5" style="background-color: #9de2ff; border-radius: .5rem .5rem 0 0;">
+  <div class="row d-flex justify-content-center">
+    <div class="col col-md-9 col-lg-7 col-xl-6">
+      <div class="card" style="border-radius: 15px;">
+        <div class="card-body p-4">
+          <div class="d-flex">
+            <div class="flex-grow-1 ms-3">
+              <h5 class="mb-1">{{ name }}</h5>
+              <p class="mb-0">{{ username }}</p>
+
+              <div class="d-flex justify-content-start rounded-3 p-2 mb-2 bg-body-tertiary">
+                <div>
+                  <p class="small mb-1">
+                    <b>Friends</b>
+                  </p>
+                  <a href="#">
+                    <p class="mb-0">{{friends|length}}</p>
+                  </a>
+                </div>
+
+                <div class="px-3">
+                  <p class="small mb-1">
+                    <b>Posts</b>
+                  </p>
+                  <a href="#">
+                    <p class="mb-0"> {{ posts|length }}</p>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+{% if posts %}
+{% for post in posts %}
+<div class="container mt-5">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="m-0">{{ post.user.get_full_name }}</h5>
+      <a href="#" data-toggle="modal" data-target="#optionsModal" class="text-muted" data-post-id="{{ post.id }}">
+        <i class="fas fa-ellipsis-v"></i>
+      </a>
+    </div>
+    <div class="card-body">
+      <h6 class="card-title">{{ post.content }}</h6>
+      <p class="card-text text-muted small">{{ post.created_at }}</p>
+      <section class="button-section d-flex justify-content-start">
+        <a class="card-body m-0 p-0" href="#">Reacts: {{ post.get_reacts_count }}</a>
+        <a class="card-body m-0 p-0" href="#">Comments: {{ post.get_comments_count }}</a>
+      </section>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% else %}
+<Center>No posts</Center>
+{% endif %}
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
 {% endblock %}
