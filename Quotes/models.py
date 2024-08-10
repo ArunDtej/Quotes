@@ -94,8 +94,20 @@ class FriendsList(models.Model):
         return False
     
     def are_friends(self, friends_collection):
-        mutual_friends = self.friends.filter(id__in=friends_collection.values_list('id', flat=True))
-        return mutual_friends
+        if friends_collection is None:
+            return False
+        
+        # If friends_collection is a single user object, handle that case
+        if isinstance(friends_collection, User):
+            return self.is_friend(friends_collection)
+        
+        # If friends_collection is a queryset or list, handle that case
+        if hasattr(friends_collection, 'values_list'):
+            mutual_friends = self.friends.filter(id__in=friends_collection.values_list('id', flat=True))
+            return mutual_friends.exists()
+        
+        # If friends_collection is neither a single user nor a queryset, return False
+        return False
     
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name= 'notifications')

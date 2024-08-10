@@ -6,11 +6,22 @@ from .models import FriendsList, Notification, Posts, Comments
 from django.contrib.auth.models import User
 from django.contrib import messages
 
-@login_required(login_url= '/auth/login/')
+from django.utils import timezone
+from datetime import timedelta
+
 def home(request):
-    #home page to display posts from friends with paging
-    print('User: {}'.format(request.user))
-    return render(request, 'home.html', {'name': request.user.get_full_name()})
+    user = request.user
+
+    now = timezone.now()
+    two_days_ago = now - timedelta(days=2)
+
+    friends_list = FriendsList.objects.get(user=user)
+    friends = friends_list.friends.all()
+
+    posts = Posts.objects.filter(user__in=friends, created_at__gte=two_days_ago)
+
+    return render(request, 'home.html', {'posts': posts, 'name': request.user.get_full_name()})
+
 
 @login_required(login_url= '/auth/login/')
 def friendsPage(request):
@@ -88,7 +99,11 @@ def Profile(request, user_id = None):
         return render(request, 'my_profile.html', context)
     else:
         user = User.objects.filter(id = user_id).first()
-        return render(request, 'profile_template.html', {'name': request.user, "friend" : user.get_full_name()})
+        are_friends =  FriendsList.objects.filter(user = request.user).first().are_friends(user)
+        
+        
+
+        return render(request, 'profile_template.html', {'name': user.get_full_name(), "username": user.username, "email": user.email, "posts": Posts.objects.filter(user = user).all().order_by('-created_at'), "are_friends": are_friends, "friend_id": user_id})
 
 @login_required(login_url= '/auth/login/')  
 def uploadPost(request):
@@ -114,3 +129,29 @@ def deletePost(request, post_id):
     return HttpResponse("Successfully deleted post")
 
 
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from .models import FriendsList, User
+
+@login_required(login_url='/auth/login/')
+def send_friend_request(request):
+    if request.method == 'POST':
+        friend_id = request.POST.get('friend_id')
+        friend = get_object_or_404(User, id=friend_id)
+        user_friends_list = FriendsList.objects.get(user=request.user)
+        user_friends_list.add_friend(friend)
+        
+        return JsonResponse({'action': 'sent'})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+@login_required(login_url='/auth/login/')
+def unfriend_user(request):
+    if request.method == 'POST':
+        friend_id = request.POST.get('friend_id')
+        friend = get_object_or_404(User, id=friend_id)
+        user_friends_list = FriendsList.objects.get(user=request.user)
+        user_friends_list.unfriend(friend)
+        
+        return JsonResponse({'action': 'removed'})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
